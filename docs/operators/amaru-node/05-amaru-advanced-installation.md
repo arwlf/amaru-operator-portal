@@ -10,7 +10,7 @@ This page covers installing the binary, running it as a systemd service under it
 ## 1. Installing Amaru as a systemd service
 
 :::info version reference
-Amaru releases follow a calendar-based scheme (e.g. `10.11.20260820`). Always check the [releases page](https://github.com/pragma-org/amaru/releases) for the latest version before installing. Amaru is still in an exploratory phase, so expect frequent releases and occasional breaking changes.
+Amaru releases follow a calendar-based scheme (e.g. `10.11.20260827`). Always check the [releases page](https://github.com/pragma-org/amaru/releases) for the latest version before installing. Amaru is still in an exploratory phase, so expect frequent releases and occasional breaking changes.
 :::
 
 For production use, run amaru under systemd so it restarts automatically on failure or reboot.
@@ -21,14 +21,14 @@ The **Debian / RPM package** is the recommended path as it installs a dedicated 
 
 **Debian/Ubuntu:**
 ```bash
-VERSION=10.11.20260820 ARCH=x86_64  # check releases page for latest; also available for aarch64
+VERSION=10.11.20260827 ARCH=x86_64  # check releases page for latest; also available for aarch64
 curl -fsSL -o amaru-$VERSION-linux-$ARCH.deb "https://github.com/pragma-org/amaru/releases/download/v$VERSION/amaru-$VERSION-linux-$ARCH.deb"
 sudo apt install ./amaru-$VERSION-linux-$ARCH.deb
 ```
 
 **Fedora/RHEL/CentOS:**
 ```bash
-VERSION=10.11.20260820 ARCH=x86_64  # check releases page for latest; also available for aarch64
+VERSION=10.11.20260827 ARCH=x86_64  # check releases page for latest; also available for aarch64
 curl -fsSL -o amaru-$VERSION-linux-$ARCH.rpm "https://github.com/pragma-org/amaru/releases/download/v$VERSION/amaru-$VERSION-linux-$ARCH.rpm"
 sudo dnf install ./amaru-$VERSION-linux-$ARCH.rpm
 ```
@@ -220,6 +220,7 @@ The stack includes:
 
 See all details in the [Amaru Monitoring Readme](https://github.com/pragma-org/amaru/tree/main/monitoring#readme)
 
+<a id="5-logs-metrics-and-monitoring-prom-only"></a>
 :::note
 If you already have a running Monitoring Stack, feel free to setup the otlp collector to your needs. 
 

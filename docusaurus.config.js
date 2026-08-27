@@ -2,6 +2,9 @@
 const repository = "https://github.com/arwlf/amaru-operator-portal";
 const branch = "main";
 
+// Amaru Discord invite
+const discordInvite = "https://discord.com/invite/3nZYCHW9Ns";
+
 // enable or disable the announcement header bar (see 'announcementBar' section below)
 const isAnnouncementActive = false;
 
@@ -142,7 +145,7 @@ module.exports = {
         src: "img/brand/cardano-horizontal-white.svg",
       },
 
-      items: getNavbarItems(),
+      items: getNavbarItems(repository, discordInvite),
     },
     // Footer is disabled (src/theme/Footer renders null). No themeConfig.footer
     // block is needed.

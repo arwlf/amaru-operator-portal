@@ -46,10 +46,10 @@ function megaMenu({label, featured, columns}) {
   };
 }
 
-function getNavbarItems() {
+function getNavbarItems(repository, discordInvite) {
   return [
     megaMenu({
-      label: 'Guide',
+      label: 'Operators',
       columns: [
         {
           title: 'Running an Amaru Node',
@@ -61,6 +61,18 @@ function getNavbarItems() {
         },
       ],
     }),
+    {
+      href: discordInvite,
+      position: 'right',
+      className: 'header-discord-link',
+      'aria-label': 'Join the Amaru Discord',
+    },
+    {
+      href: repository,
+      position: 'right',
+      className: 'header-github-link',
+      'aria-label': 'GitHub repository',
+    },
   ];
 }
 
