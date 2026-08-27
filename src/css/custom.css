@@ -1,0 +1,1072 @@
+/* stylelint-disable docusaurus/copyright-header */
+
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* Brand font, the same variable files cardano.org serves. One file per style,
+   carrying the whole 100 to 900 weight axis. */
+@font-face {
+  font-family: "Chivo";
+  src: url("/fonts/Chivo-VariableFont_wght.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Chivo";
+  src: url("/fonts/Chivo-Italic-VariableFont_wght.woff2")
+    format("woff2-variations");
+  font-weight: 100 900;
+  font-style: italic;
+  font-display: swap;
+}
+
+/* Label face for chip buttons, eyebrows, and badges. Not wired to
+   --ifm-font-family-monospace: code blocks keep their stack until design
+   decides otherwise. */
+@font-face {
+  font-family: "Chivo Mono";
+  src: url("/fonts/ChivoMono-VariableFont_wght.woff2") format("woff2-variations");
+  font-weight: 100 900;
+  font-style: normal;
+  font-display: swap;
+}
+
+/* You can override the default Infima variables here. */
+
+:root {
+  /* The rest of the stack stays as the fallback for glyphs Chivo does not
+     carry, such as the ada sign. */
+  --ifm-font-family-base: "Chivo", system-ui, -apple-system, "Segoe UI", Roboto,
+    Ubuntu, Cantarell, "Noto Sans", sans-serif, "Apple Color Emoji",
+    "Segoe UI Emoji", "Segoe UI Symbol";
+  --site-font-family-mono-label: "Chivo Mono", ui-monospace, SFMono-Regular,
+    Menlo, monospace;
+  /* Code-sample face (landing page code window and CLI pills). Deliberately
+     not Chivo Mono: code keeps a familiar editor stack until design decides
+     otherwise. */
+  --site-font-family-mono-code: "SF Mono", "Fira Code", Consolas, monospace;
+  /* 2026 rebrand weight scale. Every font-weight in src/ must reference one
+     of these tokens, never a raw number. The scale tops out at Medium 500:
+     the brand uses no heavier Chivo cut, so bold and semibold intentionally
+     converge there. Headings have their own slot below rather than riding
+     the bold token. */
+  --ifm-font-weight-light: 300;
+  --ifm-font-weight-normal: 400;
+  --ifm-font-weight-semibold: 500;
+  --ifm-font-weight-bold: 500;
+  --ifm-font-weight-base: var(--ifm-font-weight-normal);
+  /* Display slot: Chivo ExtraLight, for the hero and section headlines.
+     Heading slot: Chivo Light, driving every Infima heading. */
+  --site-font-weight-display: 200;
+  --site-font-weight-heading: var(--ifm-font-weight-light);
+  --ifm-heading-font-weight: var(--site-font-weight-heading);
+  --ifm-color-primary: #0033AD;
+  --ifm-color-primary-dark: #002E9C;
+  --ifm-color-primary-darker: #002B93;
+  --ifm-color-primary-darkest: #002479;
+  --ifm-color-primary-light: #0038BE;
+  --ifm-color-primary-lighter: #003BC7;
+  --ifm-color-primary-lightest: #0042E1;
+  --ifm-code-font-size: 95%;
+  --site-color-tooltip: #fff;
+  --site-color-tooltip-background: var(--site-color-navy);
+  /* 2026 brand palette (hex reference: static/img/brand/README.md).
+     The -rgb channel tokens exist for alpha composition: write
+     rgb(var(--site-color-navy-rgb) / 0.5) instead of hand-expanding the
+     hex into rgba() literals that detach from the palette. */
+  --site-color-cream: #FFFAF3;
+  --site-color-cream-rgb: 255 250 243;
+  --site-color-navy: #000629;
+  --site-color-navy-rgb: 0 6 41;
+  --site-color-brand-blue: #0033AD;
+  --site-color-brand-blue-rgb: 0 51 173;
+  /* Decorative only, for artwork circles and shapes. Never use for UI
+     surfaces or borders: interface blue is always #0033AD. */
+  --site-color-blue-bright: #0023EB;
+  --site-color-blue-bright-rgb: 0 35 235;
+  --site-color-lavender: #C7C2E6;
+  --site-color-lavender-deep: #968CC3;
+  --site-color-amber: #FFB122;
+  --site-color-amber-rgb: 255 177 34;
+  --site-color-gray-light: #F2F2F2;
+  --site-color-gray-light-rgb: 242 242 242;
+  /* One step down, for hover on a gray-light surface. Same relationship the
+     raised-surface pair carries. */
+  --site-color-gray-light-hover: #E8E6E1;
+  --site-color-ink: #111425;
+  --site-color-ink-muted: #5F6B85;
+  /* Muted text that follows the page background (ink on cream, white on navy) */
+  --site-color-text-muted: var(--site-color-ink-muted);
+  /* Card surfaces are navy with light text in BOTH themes, so they get
+     theme-invariant semantic tokens instead of data-theme rules. */
+  --site-color-card-surface: var(--site-color-navy);
+  --site-color-card-text: #ffffff;
+  /* Pure white, not cream: washes and text layered on a navy surface read as
+     neutral, where cream's warmth shows as a tint. Channel form so hover
+     washes can set their own alpha without re-expanding the value. */
+  --site-color-card-text-rgb: 255 255 255;
+  --site-color-card-text-muted: rgb(var(--site-color-card-text-rgb) / 0.72);
+  --site-color-card-accent: var(--site-color-amber);
+  --site-color-card-border: rgba(255, 255, 255, 0.08);
+  /* The raised surface that sits on top of the page: filter rails, tool
+     cards, search and sort controls, intent tiles, category panels. One
+     value per theme, so these all read as the same layer. The light value
+     is a cool tint that cannot be mixed from the palette (its blue channel
+     runs above cream's), which is why it is stated rather than composed. */
+  --site-color-surface-raised: #ecf1ff;
+  /* Chips sitting on top of that surface need to lift off it again. */
+  --site-color-surface-chip: #ffffff;
+  --site-color-surface-raised-hover: #dfe7fb;
+  /* Page cascade */
+  --ifm-background-color: var(--site-color-cream);
+  --ifm-font-color-base: var(--site-color-ink);
+  /* Navbar is navy in both themes */
+  --ifm-navbar-background-color: var(--site-color-navy);
+  --ifm-navbar-link-color: #ffffff;
+  /* The logo sits ~52px in from the edge on wide screens (3vw, clamped) */
+  --ifm-navbar-padding-horizontal: clamp(1rem, 3vw, 52px);
+  --docusaurus-highlighted-code-line-bg: rgb(var(--site-color-navy-rgb) / 0.08);
+  /* Docs chrome (sidebar, TOC, breadcrumbs, tables, blockquotes). Infima
+     adapts these vars in dark mode through its emphasis scale or its own
+     dark block; a direct override detaches from both, so every var set
+     here is re-declared in the dark block below. */
+  --ifm-menu-color: var(--site-color-ink-muted);
+  --ifm-menu-color-active: var(--site-color-brand-blue);
+  --ifm-menu-color-background-active: rgb(var(--site-color-navy-rgb) / 0.05);
+  --ifm-menu-color-background-hover: rgb(var(--site-color-navy-rgb) / 0.05);
+  --ifm-toc-border-color: rgb(var(--site-color-navy-rgb) / 0.12);
+  --ifm-toc-link-color: var(--site-color-text-muted);
+  --ifm-breadcrumb-item-background-active: rgb(var(--site-color-navy-rgb) / 0.05);
+  --ifm-breadcrumb-border-radius: 999px;
+  --ifm-table-border-color: rgb(var(--site-color-navy-rgb) / 0.12);
+  --ifm-blockquote-border-color: rgb(var(--site-color-brand-blue-rgb) / 0.35);
+}
+
+html[data-theme="dark"] {
+  --ifm-color-primary: #6684CE;
+  --ifm-color-primary-dark: #4E71C5;
+  --ifm-color-primary-darker: #4268C1;
+  --ifm-color-primary-darkest: #3254A8;
+  --ifm-color-primary-light: #7E97D7;
+  --ifm-color-primary-lighter: #8AA0DB;
+  --ifm-color-primary-lightest: #B0BFE7;
+  /* Dark-mode page cascade: the page is dark blue-gray (#111425, the same
+     value as light-mode ink), with #1A1C2C as the panel/section shade. Navy
+     #000629 stays reserved for the navbar, hero, footer, and cards, which
+     is what separates them here. */
+  --ifm-background-color: #111425;
+  --ifm-background-surface-color: #1A1C2C;
+  /* Restore Infima's dark text color: the :root cascade override of
+     --ifm-font-color-base (cream-page ink) ties with Infima's dark block on
+     specificity and wins on load order, so dark mode must re-declare it. */
+  --ifm-font-color-base: #e3e3e3;
+  --site-color-text-muted: rgba(255, 255, 255, 0.65);
+  /* Dark twin of the raised surface: 20% brand blue over the page, which
+     lands exactly on the design's panel colour. */
+  --site-color-surface-raised: rgb(var(--site-color-brand-blue-rgb) / 0.2);
+  --site-color-surface-chip: rgb(var(--site-color-brand-blue-rgb) / 0.28);
+  --site-color-surface-raised-hover: rgb(var(--site-color-brand-blue-rgb) / 0.32);
+  --docusaurus-highlighted-code-line-bg: rgba(255, 255, 255, 0.09);
+  /* Docs chrome, dark half: the :root overrides above detach these vars
+     from Infima's own dark adaptation, so each one is restated here. */
+  --ifm-menu-color: rgb(var(--site-color-cream-rgb) / 0.7);
+  --ifm-menu-color-active: var(--ifm-color-primary);
+  --ifm-menu-color-background-active: rgba(255, 255, 255, 0.06);
+  --ifm-menu-color-background-hover: rgba(255, 255, 255, 0.06);
+  --ifm-toc-border-color: var(--site-color-card-border);
+  --ifm-breadcrumb-item-background-active: rgba(255, 255, 255, 0.06);
+  --ifm-table-border-color: var(--site-color-card-border);
+  --ifm-blockquote-border-color: var(--ifm-color-primary-darker);
+}
+
+/* Form controls do not inherit font-family: the browser's own stylesheet sets
+   them to Arial. Without this, every button and input on the portal opts out of
+   the site font. */
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* The heading slot (Chivo Light 300) reads weaker than 400 body copy at small
+   sizes, so the minor heading levels stay on the body weight. */
+h4,
+h5,
+h6 {
+  font-weight: var(--ifm-font-weight-normal);
+}
+
+.button {
+  border-style: solid !important;
+  border-width: 1.3px !important;
+}
+
+@keyframes fadeInUp {
+  0% {
+    opacity: 0;
+    transform: translateY(1.5rem);
+  }
+}
+
+.card {
+  padding: 0;
+  margin-top: 1rem;
+  animation: fadeInUp 400ms backwards;
+  animation-delay: 150ms;
+  transition-property: all;
+  transition-duration: 200ms;
+  box-shadow: 0 8px 28px 4px rgb(var(--site-color-navy-rgb) / 0.1);
+  min-height: calc(100% - 15px);
+}
+
+.card a {
+  text-decoration: none;
+}
+
+.card:hover {
+  transform: translateY(-5px);
+}
+
+.theme-doc-card-icon {
+  display: none;
+}
+
+.tabsblock {
+  background: rgb(var(--site-color-navy-rgb) / 0.05);
+  border-radius: 0.4rem;
+}
+
+/* The navy tint disappears on the dark page, so dark mode lightens instead */
+html[data-theme="dark"] .tabsblock {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+/* theme-classic separates its (default white) announcement bar from the (default
+   white) navbar with a 1px emphasis-100 border. Ours are brand blue on navy: the
+   separator reads as a stray white hairline in light mode. No config knob.
+   .theme-announcement-bar is Docusaurus's stable public hook (ThemeClassNames);
+   the div qualifier outranks the theme's own equal-specificity rule, which is
+   bundled AFTER custom.css and would otherwise win on order. */
+div.theme-announcement-bar {
+  border-bottom: none;
+}
+
+/* The navbar is navy in both themes, but in light mode Docusaurus still
+   dresses its controls for a light bar: dark toggle/hamburger glyphs and a
+   pale DocSearch pill. Force white chrome regardless of theme.
+   The hairline replaces Infima's default shadow, which disappears where
+   the navy bar meets dark page backgrounds; it is the same edge the mega
+   menu panels and card borders carry. */
+.navbar {
+  color: #fff;
+  border-bottom: 1px solid var(--site-color-card-border);
+  box-shadow: none;
+}
+
+/* Infima sets navbar links semibold; the 2026 type scale reads lighter, so
+   the whole bar rides the light token (megaMenuTrigger matches below). */
+.navbar__link {
+  font-weight: var(--ifm-font-weight-light);
+}
+
+.navbar .DocSearch-Button {
+  background: rgba(255, 255, 255, 0.12);
+  color: #fff;
+}
+
+.navbar .DocSearch-Button:hover,
+.navbar .DocSearch-Button:focus {
+  background: rgba(255, 255, 255, 0.2);
+  color: #fff;
+  box-shadow: none;
+}
+
+.navbar .DocSearch-Button .DocSearch-Search-Icon {
+  color: #fff;
+}
+
+.navbar .DocSearch-Button-Placeholder {
+  color: rgba(255, 255, 255, 0.8);
+}
+
+.navbar .DocSearch-Button-Key {
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: none;
+  color: rgba(255, 255, 255, 0.8);
+}
+
+/* --- Search modal --------------------------------------------------------
+   The DocSearch overlay themed onto the palette: cream surfaces in light
+   mode, and in dark mode the modal joins the navy chrome like the mega
+   menu panels. Docusaurus already maps --docsearch-primary-color and
+   --docsearch-text-color to Infima tokens, so those stay untouched.
+   Scoped on `html[data-theme] body` rather than :root: the library
+   declares its own values on :root and html[data-theme=dark], and theme
+   CSS bundles after this file, so only a strictly more specific selector
+   wins deterministically. The modal portals into body, so the variables
+   still inherit. */
+html[data-theme="light"] body {
+  --docsearch-modal-background: var(--site-color-cream);
+  --docsearch-background-color: var(--site-color-cream);
+  --docsearch-searchbox-background: rgb(var(--site-color-navy-rgb) / 0.05);
+  --docsearch-searchbox-focus-background: rgb(var(--site-color-navy-rgb) / 0.05);
+  --docsearch-hit-background: #fff;
+  --docsearch-hit-color: var(--site-color-ink);
+  --docsearch-highlight-color: var(--site-color-brand-blue);
+  --docsearch-hit-highlight-color: rgb(var(--site-color-brand-blue-rgb) / 0.1);
+  --docsearch-soft-primary-color: rgb(var(--site-color-brand-blue-rgb) / 0.1);
+  --docsearch-muted-color: var(--site-color-ink-muted);
+  --docsearch-secondary-text-color: var(--site-color-ink-muted);
+  --docsearch-icon-color: var(--site-color-ink-muted);
+  --docsearch-key-background: rgb(var(--site-color-navy-rgb) / 0.06);
+  --docsearch-key-color: var(--site-color-ink-muted);
+  --docsearch-key-pressed-shadow: none;
+  --docsearch-footer-background: var(--site-color-cream);
+  --docsearch-footer-shadow: 0 -1px 0 0 rgb(var(--site-color-navy-rgb) / 0.08);
+  --docsearch-container-background: rgb(var(--site-color-navy-rgb) / 0.6);
+  --docsearch-logo-color: var(--site-color-brand-blue);
+  --docsearch-border-radius: 12px;
+  --docsearch-focus-color: var(--site-color-navy);
+  /* The library derives these three from other variables at the html
+     level, where our body-scoped values cannot reach the substitution,
+     so they are set explicitly */
+  --docsearch-dropdown-menu-background: #fff;
+  --docsearch-dropdown-menu-item-hover-background: var(--site-color-cream);
+  --docsearch-subtle-color: rgb(var(--site-color-navy-rgb) / 0.12);
+}
+
+html[data-theme="dark"] body {
+  --docsearch-modal-background: var(--site-color-navy);
+  --docsearch-background-color: var(--site-color-navy);
+  --docsearch-modal-shadow: inset 0 0 0 1px var(--site-color-card-border),
+    0 24px 64px rgb(0 0 0 / 0.45);
+  --docsearch-searchbox-background: rgba(255, 255, 255, 0.08);
+  --docsearch-searchbox-focus-background: rgba(255, 255, 255, 0.08);
+  --docsearch-hit-background: rgba(255, 255, 255, 0.05);
+  --docsearch-hit-color: rgb(var(--site-color-cream-rgb) / 0.87);
+  --docsearch-highlight-color: var(--site-color-amber);
+  --docsearch-hit-highlight-color: rgb(var(--site-color-amber-rgb) / 0.15);
+  --docsearch-soft-primary-color: rgb(var(--site-color-amber-rgb) / 0.15);
+  --docsearch-muted-color: rgb(var(--site-color-cream-rgb) / 0.55);
+  --docsearch-secondary-text-color: rgb(var(--site-color-cream-rgb) / 0.7);
+  --docsearch-icon-color: rgb(var(--site-color-cream-rgb) / 0.6);
+  --docsearch-key-background: rgba(255, 255, 255, 0.1);
+  --docsearch-key-color: rgb(var(--site-color-cream-rgb) / 0.8);
+  --docsearch-key-pressed-shadow: none;
+  --docsearch-footer-background: var(--site-color-navy);
+  --docsearch-footer-shadow: 0 -1px 0 0 var(--site-color-card-border);
+  --docsearch-container-background: rgb(var(--site-color-navy-rgb) / 0.75);
+  --docsearch-logo-color: #fff;
+  --docsearch-border-radius: 12px;
+  --docsearch-focus-color: var(--site-color-amber);
+  /* Same derived-variable escape as the light block above */
+  --docsearch-dropdown-menu-background: rgba(255, 255, 255, 0.05);
+  --docsearch-dropdown-menu-item-hover-background: rgba(255, 255, 255, 0.1);
+  --docsearch-subtle-color: var(--site-color-card-border);
+}
+
+/* Center the nav links in the bar: the logo hugs the left edge via its auto
+   margin, a mirroring auto-margin pseudo-element flexes at the group's end,
+   and the links settle in the middle of the space between logo and the
+   right-hand controls. Delete this block to restore the default
+   logo-adjacent links. Desktop only; the mobile drawer keeps Infima's
+   layout. */
+@media (min-width: 997px) {
+  .navbar__items:not(.navbar__items--right) .navbar__brand {
+    margin-right: auto;
+  }
+
+  .navbar__items:not(.navbar__items--right)::after {
+    content: "";
+    margin-left: auto;
+  }
+}
+
+/* --- Mega menus ---------------------------------------------------------
+   Navy frosted panels that read as an extension of the navbar in both
+   themes. Open/close is React state in
+   src/theme/NavbarItem/DropdownNavbarItem/index.js, which stamps
+   [data-open] on the item; CSS handles presentation and the transition. */
+
+.navbar__item--mega {
+  position: relative;
+}
+
+.megaMenuTrigger {
+  background: none;
+  border: none;
+  cursor: pointer;
+  padding: 0.375rem 0.875rem;
+  border-radius: 999px;
+  display: flex;
+  align-items: center;
+  color: var(--ifm-navbar-link-color);
+  font-size: var(--ifm-font-size-base);
+  /* Matches .navbar__link (overridden above) so every navbar item is one
+     weight; light, to sit with the ExtraLight display type. */
+  font-weight: var(--ifm-font-weight-light);
+  text-decoration: none;
+  transition: background-color 0.16s ease;
+}
+
+.navbar__item--mega:hover .megaMenuTrigger,
+.navbar__item--mega[data-open] .megaMenuTrigger {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.megaMenuTrigger::after {
+  content: '';
+  display: inline-block;
+  margin-left: 8px;
+  width: 0;
+  height: 0;
+  border-left: 5px solid transparent;
+  border-right: 5px solid transparent;
+  border-top: 5px solid currentColor;
+  vertical-align: middle;
+  opacity: 0.9;
+  transition: transform 0.16s ease;
+}
+
+.navbar__item--mega[data-open] .megaMenuTrigger::after {
+  transform: rotate(180deg);
+}
+
+/* Panel: centered under its trigger, kept in the DOM so it can animate.
+   Width comes from its content (tile + fixed-width columns).
+   --mega-menu-shift is set by the React component when the centered
+   position would push the panel past a viewport edge. */
+.megaMenuPanel {
+  position: absolute;
+  top: calc(100% + 10px);
+  left: 50%;
+  z-index: 10;
+  width: max-content;
+  max-width: min(920px, calc(100vw - 2rem));
+  padding: 1.25rem;
+  background: rgb(var(--site-color-navy-rgb) / 0.92);
+  -webkit-backdrop-filter: blur(16px);
+  backdrop-filter: blur(16px);
+  border: 1px solid var(--site-color-card-border);
+  border-radius: 16px;
+  box-shadow: 0 24px 64px rgb(var(--site-color-navy-rgb) / 0.45);
+  opacity: 0;
+  visibility: hidden;
+  transform: translate(calc(-50% + var(--mega-menu-shift, 0px)), 6px);
+  pointer-events: none;
+  transition: opacity 0.16s ease, transform 0.16s ease, visibility 0.16s;
+}
+
+/* Without backdrop-filter the page ghosts through the 0.92 alpha behind
+   low-contrast panel text, so fall back to a solid surface */
+@supports not ((backdrop-filter: blur(1px)) or (-webkit-backdrop-filter: blur(1px))) {
+  .megaMenuPanel {
+    background: var(--site-color-navy);
+  }
+}
+
+.navbar__item--mega[data-open] .megaMenuPanel {
+  opacity: 1;
+  visibility: visible;
+  transform: translate(calc(-50% + var(--mega-menu-shift, 0px)), 0);
+  pointer-events: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .megaMenuPanel,
+  .megaMenuTrigger::after {
+    transition: none;
+  }
+}
+
+/* Invisible bridge over the trigger-to-panel gap so the pointer can travel
+   down without the hover-close timer firing mid-way */
+.megaMenuPanel::before {
+  content: '';
+  position: absolute;
+  top: -12px;
+  left: 0;
+  right: 0;
+  height: 12px;
+}
+
+.megaMenuInner {
+  display: flex;
+  align-items: stretch;
+  gap: 1.5rem;
+}
+
+.megaMenuColumn {
+  width: 252px;
+}
+
+.megaMenuColumnTitle {
+  font-size: 0.72rem;
+  font-weight: var(--ifm-font-weight-semibold);
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: rgb(var(--site-color-cream-rgb) / 0.55);
+  padding: 0.25rem 0.75rem 0.6rem;
+}
+
+.megaMenuColumnList {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+/* Hairline dividers separate rows without adding visual weight */
+.megaMenuItem + .megaMenuItem {
+  border-top: 1px solid rgba(255, 255, 255, 0.06);
+}
+
+.megaMenuItemLink {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  padding: 0.6rem 0.75rem;
+  border-radius: 10px;
+  text-decoration: none !important;
+  transition: background-color 0.16s ease;
+}
+
+.megaMenuItemLink:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+.megaMenuItemIconTile {
+  flex-shrink: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 10px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--site-color-cream);
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.megaMenuItemLink:hover .megaMenuItemIconTile {
+  background: var(--site-color-amber);
+  color: var(--site-color-navy);
+}
+
+.megaMenuItemIcon {
+  width: 16px;
+  height: 16px;
+  fill: currentColor;
+}
+
+.megaMenuItemContent {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+.megaMenuItemLabel {
+  display: block;
+  font-size: 0.9rem;
+  font-weight: var(--ifm-font-weight-semibold);
+  color: var(--site-color-cream);
+}
+
+.megaMenuItemDescription {
+  display: block;
+  font-size: 0.78rem;
+  line-height: 1.4;
+  color: rgb(var(--site-color-cream-rgb) / 0.6);
+}
+
+/* Featured tile: one per panel, carrying the same artwork as the landing
+   section it links to, with copy over a darkening gradient and a pill CTA */
+.megaMenuFeatured {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-end;
+  width: 252px;
+  min-height: 252px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: var(--site-color-navy);
+  border: 1px solid var(--site-color-card-border);
+  text-decoration: none !important;
+  transition: transform 0.16s ease;
+}
+
+.megaMenuFeatured:hover {
+  transform: translateY(-2px);
+}
+
+.megaMenuFeaturedArt {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.megaMenuFeaturedBody {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+  padding: 3rem 1rem 1rem;
+  background: linear-gradient(
+    180deg,
+    rgb(var(--site-color-navy-rgb) / 0) 0%,
+    rgb(var(--site-color-navy-rgb) / 0.85) 45%,
+    rgb(var(--site-color-navy-rgb) / 0.97) 100%
+  );
+}
+
+.megaMenuFeaturedTitle {
+  font-size: 1.15rem;
+  font-weight: var(--site-font-weight-heading);
+  color: var(--site-color-cream);
+}
+
+.megaMenuFeaturedDescription {
+  font-size: 0.78rem;
+  line-height: 1.45;
+  color: rgb(var(--site-color-cream-rgb) / 0.75);
+}
+
+/* Global mirror of the landing page's filled mono chip. The landing version
+   lives in a CSS module (src/pages/styles.module.css), whose classes global
+   CSS cannot compose; unifying both on one global utility is a follow-up. */
+.megaMenuFeaturedCta {
+  margin-top: 0.5rem;
+  align-self: flex-start;
+  font-family: var(--site-font-family-mono-label);
+  font-weight: var(--ifm-font-weight-normal);
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+  font-size: 0.7rem;
+  padding: 0.4rem 0.9rem;
+  border-radius: 999px;
+  background: var(--site-color-brand-blue);
+  color: var(--site-color-gray-light);
+  transition: background-color 0.16s ease, color 0.16s ease;
+}
+
+.megaMenuFeatured:hover .megaMenuFeaturedCta {
+  background: var(--site-color-amber);
+  color: var(--site-color-navy);
+}
+
+/* Keyboard focus: an amber ring reads on the navy panel and navbar in both
+   themes; the featured tile pulls it inward so overflow:hidden can't clip it */
+.megaMenuTrigger:focus-visible,
+.megaMenuItemLink:focus-visible {
+  outline: 2px solid var(--site-color-amber);
+  outline-offset: 2px;
+}
+
+.megaMenuFeatured:focus-visible {
+  outline: 2px solid var(--site-color-amber);
+  outline-offset: -2px;
+}
+
+/* --- Docs reading experience ---
+   The docs area on the 2026 brand: variables and CSS on Docusaurus' stable
+   theme-* / Infima classes only. No doc component is swizzled, so theme
+   upgrades keep their markup and accessibility. The matching color tokens
+   live in the :root and dark blocks at the top of this file. */
+
+/* Sidebar: a quiet rail on the page background, scoped to the docs tree
+   (the desktop rail and the drawer's docs pane) so the drawer's primary
+   nav and the blog sidebar keep their own type. Infima sets the whole
+   menu semibold, so the tree resets to normal first and only the
+   top-level category labels carry weight, giving two tiers. Collapsible
+   category rows paint their hover on the list item, so the chip radius
+   goes there as well. */
+.theme-doc-sidebar-menu {
+  font-weight: var(--ifm-font-weight-normal);
+}
+
+.theme-doc-sidebar-menu .menu__link {
+  border-radius: 8px;
+  font-size: 0.9rem;
+}
+
+.theme-doc-sidebar-menu .menu__list-item-collapsible {
+  border-radius: 8px;
+}
+
+.theme-doc-sidebar-item-category-level-1
+  > .menu__list-item-collapsible
+  > .menu__link {
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+/* The mobile drawer sits on the navy navbar surface in both themes, so its
+   menu rides the drawer's palette instead of the page rail's. The caret
+   filter borrows Infima's own dark-mode inversion, which light mode never
+   applies on its own. */
+.navbar-sidebar {
+  --ifm-menu-color: rgb(var(--site-color-cream-rgb) / 0.7);
+  --ifm-menu-color-active: #ffffff;
+  --ifm-menu-color-background-active: rgba(255, 255, 255, 0.06);
+  --ifm-menu-color-background-hover: rgba(255, 255, 255, 0.06);
+  --ifm-menu-link-sublist-icon-filter: invert(100%) sepia(94%) saturate(17%)
+    hue-rotate(223deg) brightness(104%) contrast(98%);
+}
+
+/* TOC: Infima hardcodes the active color to primary with no variable for
+   it, so the active state needs a rule; the code descendant mirrors
+   upstream's own selector list. Idle links ride --ifm-toc-link-color. */
+.table-of-contents__link--active,
+.table-of-contents__link--active code {
+  color: var(--ifm-color-primary);
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+/* Breadcrumbs: upstream has no variable for the idle link color. The
+   active crumb keeps its own color through the breadcrumb tokens. */
+.breadcrumbs__link {
+  color: var(--site-color-text-muted);
+}
+
+/* Prev/next: Infima hardcodes the border color (no variable exists), and
+   the guillemets are pseudo-content, so both are replaced here. */
+.pagination-nav__link {
+  border: 1px solid rgb(var(--site-color-navy-rgb) / 0.15);
+  border-radius: 12px;
+}
+
+.pagination-nav__link:hover {
+  border-color: var(--site-color-brand-blue);
+  background: rgb(var(--site-color-navy-rgb) / 0.03);
+  text-decoration: none;
+}
+
+.pagination-nav__sublabel {
+  color: var(--site-color-text-muted);
+}
+
+.pagination-nav__link--prev .pagination-nav__label::before {
+  content: "← ";
+}
+
+.pagination-nav__link--next .pagination-nav__label::after {
+  content: " →";
+}
+
+html[data-theme="dark"] .pagination-nav__link {
+  border-color: var(--site-color-card-border);
+}
+
+html[data-theme="dark"] .pagination-nav__link:hover {
+  border-color: var(--ifm-color-primary);
+  background: rgba(255, 255, 255, 0.04);
+}
+
+/* Category-index cards. Scoped to the docs card class: the global .card
+   also serves the landing page and must not change. */
+.theme-doc-card-container {
+  border: 1px solid rgb(var(--site-color-navy-rgb) / 0.12);
+  border-radius: 12px;
+}
+
+.theme-doc-card-container:hover {
+  border-color: var(--site-color-brand-blue);
+}
+
+html[data-theme="dark"] .theme-doc-card-container {
+  border-color: var(--site-color-card-border);
+}
+
+html[data-theme="dark"] .theme-doc-card-container:hover {
+  border-color: var(--ifm-color-primary);
+}
+
+/* Tabs: the active underline already rides --ifm-tabs-color-active, which
+   resolves to primary in both themes. Rounded top corners and a hover wash
+   bring the row into the chip family. */
+.tabs__item {
+  border-radius: 8px 8px 0 0;
+}
+
+.tabs__item:hover {
+  background: rgb(var(--site-color-navy-rgb) / 0.05);
+}
+
+html[data-theme="dark"] .tabs__item:hover {
+  background: rgba(255, 255, 255, 0.06);
+}
+
+/* Doc footer meta row */
+.theme-last-updated {
+  color: var(--site-color-text-muted);
+}
+
+/* Surface-aware focus rings for the docs chrome, following the site rule:
+   navy ring on light page surfaces, amber on dark ones, amber inside the
+   navy drawer in both themes. */
+.menu__link:focus-visible,
+.breadcrumbs__link:focus-visible,
+.table-of-contents__link:focus-visible,
+.pagination-nav__link:focus-visible,
+.theme-doc-card-container:focus-visible,
+.tabs__item:focus-visible {
+  outline: 2px solid var(--site-color-navy);
+  outline-offset: 2px;
+}
+
+html[data-theme="dark"] .menu__link:focus-visible,
+html[data-theme="dark"] .breadcrumbs__link:focus-visible,
+html[data-theme="dark"] .table-of-contents__link:focus-visible,
+html[data-theme="dark"] .pagination-nav__link:focus-visible,
+html[data-theme="dark"] .theme-doc-card-container:focus-visible,
+html[data-theme="dark"] .tabs__item:focus-visible,
+.navbar-sidebar .menu__link:focus-visible {
+  outline-color: var(--site-color-amber);
+}
+
+/* Admonitions on the brand palette: warning and caution ride amber, info
+   and its important alias ride brand blue, note goes neutral; tip and
+   danger keep Infima's
+   conventional green and red. Only background and border move: foreground
+   and icon stay on Infima's contrast sets, which already adapt per theme.
+   The .alert prefix out-specifies Infima's .alert--type blocks instead of
+   relying on stylesheet order. <details> is named explicitly because it
+   renders as alert--info without a theme-admonition class; its summary
+   arrow follows the border color. */
+.alert.theme-admonition-warning,
+.alert.theme-admonition-caution {
+  --ifm-alert-background-color: rgb(var(--site-color-amber-rgb) / 0.12);
+  --ifm-alert-border-color: var(--site-color-amber);
+}
+
+.alert.theme-admonition-info,
+.alert.theme-admonition-important,
+details.alert--info {
+  --ifm-alert-background-color: rgb(var(--site-color-brand-blue-rgb) / 0.07);
+  --ifm-alert-border-color: var(--site-color-brand-blue);
+}
+
+.alert.theme-admonition-note {
+  --ifm-alert-background-color: rgb(var(--site-color-navy-rgb) / 0.04);
+  --ifm-alert-border-color: rgb(var(--site-color-navy-rgb) / 0.35);
+}
+
+html[data-theme="dark"] .alert.theme-admonition-warning,
+html[data-theme="dark"] .alert.theme-admonition-caution {
+  --ifm-alert-background-color: rgb(var(--site-color-amber-rgb) / 0.15);
+}
+
+html[data-theme="dark"] .alert.theme-admonition-info,
+html[data-theme="dark"] .alert.theme-admonition-important,
+html[data-theme="dark"] details.alert--info {
+  --ifm-alert-background-color: rgba(255, 255, 255, 0.05);
+  --ifm-alert-border-color: var(--ifm-color-primary);
+}
+
+html[data-theme="dark"] .alert.theme-admonition-note {
+  --ifm-alert-background-color: rgba(255, 255, 255, 0.04);
+  --ifm-alert-border-color: var(--site-color-card-border);
+}
+
+/* Uppercase admonition titles read spindly at the Light 300 heading
+   weight. The heading div carries only a hashed class, so it is reached
+   structurally; :not(:only-child) restricts the rule to admonitions that
+   render both heading and content, since a lone div could be a title-less
+   body that must not turn bold. */
+.theme-admonition > div:first-child:not(:only-child) {
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+/* Code block chrome. The title bar and buttons carry only hashed module
+   classes, so they are reached through the stable .theme-code-block
+   ancestor (upstream keys button visibility off the same class). The
+   title-bar div only renders when a block sets a title. */
+.theme-code-block > div:first-child:not(:only-child) {
+  border-bottom: 1px solid rgb(var(--site-color-navy-rgb) / 0.12);
+}
+
+.theme-code-block .clean-btn {
+  border: 1px solid rgb(var(--site-color-navy-rgb) / 0.15);
+}
+
+html[data-theme="dark"] .theme-code-block > div:first-child:not(:only-child) {
+  border-bottom-color: var(--site-color-card-border);
+}
+
+html[data-theme="dark"] .theme-code-block .clean-btn {
+  border-color: var(--site-color-card-border);
+}
+
+/* Reviewer highlight: marks content added for the Amaru documentation
+   update so it stands out against the untouched cardano-node content
+   around it. Not part of the permanent design system — safe to delete
+   this rule (and the .doc-added wrappers in the docs) once reviewed. */
+.doc-added {
+  background-color: rgba(220, 38, 38, 0.12);
+  border-radius: 6px;
+}
+
+div.doc-added {
+  padding: 0.75rem 1rem;
+  margin: 0.75rem 0;
+}
+
+span.doc-added {
+  padding: 0.05em 0.3em;
+  box-decoration-break: clone;
+  -webkit-box-decoration-break: clone;
+}
+
+html[data-theme="dark"] .doc-added {
+  background-color: rgba(248, 113, 113, 0.18);
+}
+
+/* "Copy page" dropdown in the docs breadcrumb row
+ * (rendered by src/theme/DocBreadcrumbs via src/components/CopyMarkdownActions) */
+.docbreadcrumbs-with-actions {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.8rem;
+}
+
+/* The wrapped breadcrumb nav carries its own bottom margin; move it to the
+ * flex row above so the row spacing matches the unmodified layout. */
+.docbreadcrumbs-with-actions .theme-doc-breadcrumbs {
+  margin-bottom: 0;
+}
+
+.copy-markdown {
+  display: flex;
+  position: relative;
+  margin-left: auto;
+}
+
+.copy-markdown__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.4rem 0.7rem;
+  font-size: 0.875rem;
+  font-weight: var(--ifm-font-weight-semibold);
+  line-height: 1.25;
+  color: var(--ifm-font-color-base);
+  background-color: rgb(var(--site-color-navy-rgb) / 0.04);
+  border: 1px solid rgb(var(--site-color-navy-rgb) / 0.2);
+  border-radius: 0.5rem;
+  cursor: pointer;
+  transition: background-color 0.15s ease, border-color 0.15s ease;
+}
+
+.copy-markdown__trigger:hover {
+  background-color: rgb(var(--site-color-navy-rgb) / 0.08);
+  border-color: var(--site-color-brand-blue);
+}
+
+/* The navy washes vanish on the dark page, so dark mode lightens instead */
+html[data-theme="dark"] .copy-markdown__trigger {
+  background-color: rgba(255, 255, 255, 0.06);
+  border-color: rgba(255, 255, 255, 0.25);
+}
+
+html[data-theme="dark"] .copy-markdown__trigger:hover {
+  border-color: var(--ifm-color-primary);
+}
+
+html[data-theme="dark"] .copy-markdown__trigger:hover,
+html[data-theme="dark"] .copy-markdown__item:hover {
+  background-color: rgba(255, 255, 255, 0.1);
+}
+
+.copy-markdown__chevron {
+  transition: transform 0.15s ease;
+}
+
+.copy-markdown__chevron--open {
+  transform: rotate(180deg);
+}
+
+.copy-markdown__menu {
+  position: absolute;
+  top: calc(100% + 0.4rem);
+  right: 0;
+  z-index: 2;
+  display: flex;
+  flex-direction: column;
+  min-width: 290px;
+  padding: 0.35rem;
+  background-color: var(--ifm-background-surface-color);
+  border: 1px solid rgb(var(--site-color-navy-rgb) / 0.12);
+  border-radius: 0.6rem;
+  box-shadow: 0 6px 24px rgb(var(--site-color-navy-rgb) / 0.14);
+}
+
+html[data-theme="dark"] .copy-markdown__menu {
+  border-color: var(--site-color-card-border);
+}
+
+.copy-markdown__item {
+  display: flex;
+  align-items: flex-start;
+  gap: 0.6rem;
+  width: 100%;
+  padding: 0.55rem 0.6rem;
+  text-align: left;
+  color: var(--ifm-font-color-base);
+  background-color: transparent;
+  border: 0;
+  border-radius: 0.4rem;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.copy-markdown__item:hover {
+  color: var(--ifm-font-color-base);
+  background-color: rgb(var(--site-color-navy-rgb) / 0.08);
+  text-decoration: none;
+}
+
+.copy-markdown__item > svg {
+  flex: 0 0 auto;
+  margin-top: 0.15rem;
+  color: var(--site-color-text-muted);
+}
+
+.copy-markdown__item-text {
+  display: flex;
+  flex-direction: column;
+  gap: 0.1rem;
+}
+
+.copy-markdown__item-title {
+  font-size: 0.9rem;
+  font-weight: var(--ifm-font-weight-semibold);
+}
+
+.copy-markdown__item-desc {
+  font-size: 0.8rem;
+  color: var(--site-color-text-muted);
+}
+
+/* Visually-hidden live region announcing copy success/failure to screen readers */
+.copy-markdown__status {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}

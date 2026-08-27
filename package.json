@@ -1,0 +1,52 @@
+{
+  "name": "amaru-operator-portal",
+  "version": "0.0.0",
+  "private": true,
+  "description": "A guide to installing, configuring, running, and maintaining an Amaru node on Cardano.",
+  "homepage": "https://arwlf.github.io/amaru-operator-portal",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/arwlf/amaru-operator-portal.git"
+  },
+  "license": "MIT",
+  "scripts": {
+    "docusaurus": "docusaurus",
+    "start": "docusaurus start",
+    "build": "docusaurus build && node scripts/fix-llms-paths.js",
+    "swizzle": "docusaurus swizzle",
+    "deploy": "docusaurus deploy",
+    "serve": "docusaurus serve",
+    "clear": "docusaurus clear"
+  },
+  "dependencies": {
+    "@docusaurus/core": "^3.10.2",
+    "@docusaurus/plugin-client-redirects": "^3.10.2",
+    "@docusaurus/plugin-content-docs": "^3.10.2",
+    "@docusaurus/plugin-ideal-image": "^3.10.2",
+    "@docusaurus/preset-classic": "^3.10.2",
+    "@docusaurus/theme-mermaid": "^3.10.2",
+    "@docusaurus/theme-search-algolia": "^3.10.2",
+    "@mdx-js/react": "^3.1.0",
+    "@popperjs/core": "^2.11.2",
+    "clsx": "^1.1.1",
+    "node-fetch": "^2.6.7",
+    "react": "^18.0.0",
+    "react-dom": "^18.0.0",
+    "react-popper": "^2.2.5"
+  },
+  "browserslist": {
+    "production": [
+      ">0.5%",
+      "not dead",
+      "not op_mini all"
+    ],
+    "development": [
+      "last 1 chrome version",
+      "last 1 firefox version",
+      "last 1 safari version"
+    ]
+  },
+  "devDependencies": {
+    "docusaurus-plugin-llms": "0.4.0"
+  }
+}
