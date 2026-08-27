@@ -15,13 +15,13 @@ This is the fast path to a synced Amaru node: install the binary, bootstrap from
 | Preprod | 2 |   2GB    |     10GB     |
 
 :::note
-The Amaru process should not excess the use of 1GB of RSS Memory under "standard" conditions. Allocating 4GB of RAM provides sufficient headroom for the process to handle the load associated with mainnet stress.
+The Amaru process should not exceed 1 GB of RSS memory under standard conditions. Allocating 4GB of RAM provides sufficient headroom for the process to handle the load associated with mainnet stress.
 :::
 
 ## 2. Installing Amaru
 
 :::info version reference
-Amaru releases follow a calendar-based scheme (e.g. `10.11.20260807`). Always check the [releases page](https://github.com/pragma-org/amaru/releases) for the latest version before installing. Amaru is still in an exploratory phase, so expect frequent releases and occasional breaking changes.
+Amaru releases follow a calendar-based scheme (e.g. `10.11.20260820`). Always check the [releases page](https://github.com/pragma-org/amaru/releases) for the latest version before installing. Amaru is still in an exploratory phase, so expect frequent releases and occasional breaking changes.
 :::
 
 Pick whichever method fits your environment:
@@ -40,14 +40,14 @@ Also installs a dedicated system user and a systemd service, it's the recommende
 
 **Debian/Ubuntu:**
 ```bash
-VERSION=<latest-release> ARCH=x86_64  # check releases page for latest; also available for aarch64
+VERSION=10.11.20260820 ARCH=x86_64  # check releases page for latest; also available for aarch64
 curl -fsSL -o amaru-$VERSION-linux-$ARCH.deb "https://github.com/pragma-org/amaru/releases/download/v$VERSION/amaru-$VERSION-linux-$ARCH.deb"
 sudo apt install ./amaru-$VERSION-linux-$ARCH.deb
 ```
 
 **Fedora/RHEL/CentOS:**
 ```bash
-VERSION=<latest-release> ARCH=x86_64  # check releases page for latest; also available for aarch64
+VERSION=10.11.20260820 ARCH=x86_64  # check releases page for latest; also available for aarch64
 curl -fsSL -o amaru-$VERSION-linux-$ARCH.rpm "https://github.com/pragma-org/amaru/releases/download/v$VERSION/amaru-$VERSION-linux-$ARCH.rpm"
 sudo dnf install ./amaru-$VERSION-linux-$ARCH.rpm
 ```
