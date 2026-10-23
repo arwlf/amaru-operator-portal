@@ -57,6 +57,7 @@ function getNavbarItems(repository, discordInvite) {
             {to: '/docs/operators/amaru-node/amaru-user-guide/', label: 'Getting Started', description: 'Scope, network options, and where to start', icon: 'book'},
             {to: '/docs/operators/amaru-node/amaru-fast-forward/', label: 'Run on Preprod', description: 'Quick start on the preprod testnet', icon: 'wrench'},
             {to: '/docs/operators/amaru-node/amaru-advanced/', label: 'Run on Mainnet', description: 'Production-grade path: hardening, install, operate', icon: 'building'},
+            {to: '/docs/operators/amaru-node/amaru-stake-pool-creation/', label: 'Create a Stake Pool', description: 'Generate keys and register a pool on testnet', icon: 'wrench'},
           ],
         },
       ],

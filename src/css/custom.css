@@ -1096,3 +1096,21 @@ html[data-theme="dark"] .copy-markdown__menu {
   white-space: nowrap;
   border: 0;
 }
+
+/* [air-gapped] step tag on the stake pool cheatsheet */
+.tag-air-gapped {
+  color: #e06666;
+}
+
+html[data-theme="dark"] .tag-air-gapped {
+  color: #ff8a80;
+}
+
+/* [online] step tag on the stake pool cheatsheet */
+.tag-online {
+  color: #4caf50;
+}
+
+html[data-theme="dark"] .tag-online {
+  color: #81c784;
+}

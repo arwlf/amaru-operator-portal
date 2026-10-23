@@ -23,6 +23,7 @@ module.exports = {
             "operators/amaru-node/amaru-advanced-installation",
           ],
         },
+        "operators/amaru-node/amaru-stake-pool-creation",
       ],
     },
   ],
