@@ -354,13 +354,35 @@ cardano-cli conway stake-address registration-certificate \
 ```
 
 :::tip Check the current deposit
-The air-gapped machine cannot query the chain. Check the current value on the online machine first, for example on Preprod:
+The air-gapped machine cannot query the chain. Check the current value on the online machine first:
+
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
 
 ```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preview/node.socket"
+cardano-cli conway query protocol-parameters --testnet-magic 2 | jq .stakeAddressDeposit
+```
+
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preprod/node.socket"
 cardano-cli conway query protocol-parameters --testnet-magic 1 | jq .stakeAddressDeposit
 ```
 
-Use `--testnet-magic 2` for Preview or `--mainnet` for Mainnet.
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/mainnet/node.socket"
+cardano-cli conway query protocol-parameters --mainnet | jq .stakeAddressDeposit
+```
+
+</TabItem>
+</Tabs>
+
 :::
 
 _Copy `stake.cert` to the online machine._
@@ -751,6 +773,47 @@ cardano-cli conway transaction build \
     --witness-override 3 \
     --out-file tx.raw
 ```
+
+:::note Several UTxOs at payment.addr
+Check the address first with the `cardano-cli conway query utxo --address $(cat payment.addr) --mainnet`  
+If there are several UTxO, `keys[0]` will only use the first one. If the first one is too small for the pool deposit of 500 ADA (`500000000` lovelace), pass every UTxO instead :
+
+```bash
+TX_INS=($(cardano-cli conway query utxo --address $(cat payment.addr) --mainnet --out-file /dev/stdout | jq -r 'keys[] | "--tx-in", .'))
+echo "${TX_INS[@]}"
+```
+
+Then replace the `--tx-in $(...)` line of the command above with `"${TX_INS[@]}" \`:
+
+```bash
+cardano-cli conway transaction build \
+    "${TX_INS[@]}" \
+    --change-address $(cat payment.addr) \
+    --mainnet \
+    --certificate-file pool.cert \
+    --certificate-file deleg.cert \
+    --invalid-hereafter $(( currentSlot + 1000 )) \
+    --witness-override 3 \
+    --out-file tx.raw
+```
+
+You can also list the UTxOs by hand:
+
+```bash
+cardano-cli conway transaction build \
+    --tx-in <txhash>#<index> \
+    --tx-in <txhash>#<index> \
+    --change-address $(cat payment.addr) \
+    --mainnet \
+    --certificate-file pool.cert \
+    --certificate-file deleg.cert \
+    --invalid-hereafter $(( currentSlot + 1000 )) \
+    --witness-override 3 \
+    --out-file tx.raw
+```
+
+All inputs are at the same address, so `payment.skey` signs them all and `--witness-override` does not change. The change goes back to `payment.addr` as a single UTxO.
+:::
 
 </TabItem>
 </Tabs>
