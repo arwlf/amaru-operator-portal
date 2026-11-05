@@ -561,6 +561,8 @@ echo "Minimum pool cost: $minPoolCost lovelace"
 
 ### Pool registration certificate <span className="tag-air-gapped">[air-gapped]</span>
 
+`--pool-cost` must be at least the `minPoolCost` returned in the previous step. At the time of writing, that's 75 ADA (`75000000` lovelace) on preview and preprod, and 170 ADA (`170000000` lovelace) on mainnet.
+
 <Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
 <TabItem value="preview" label="Preview">
 
@@ -569,7 +571,7 @@ cardano-cli conway stake-pool registration-certificate \
     --cold-verification-key-file cold.vkey \
     --vrf-verification-key-file vrf.vkey \
     --pool-pledge 9000000000 \
-    --pool-cost 170000000 \
+    --pool-cost 75000000 \
     --pool-margin 0.01 \
     --pool-reward-account-verification-key-file stake.vkey \
     --pool-owner-stake-verification-key-file stake.vkey \
@@ -589,7 +591,7 @@ cardano-cli conway stake-pool registration-certificate \
     --cold-verification-key-file cold.vkey \
     --vrf-verification-key-file vrf.vkey \
     --pool-pledge 9000000000 \
-    --pool-cost 170000000 \
+    --pool-cost 75000000 \
     --pool-margin 0.01 \
     --pool-reward-account-verification-key-file stake.vkey \
     --pool-owner-stake-verification-key-file stake.vkey \
