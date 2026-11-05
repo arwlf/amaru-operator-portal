@@ -640,10 +640,45 @@ cardano-cli conway stake-pool registration-certificate \
 </Tabs>
 
 :::note Relay options
-- Multiple relays: repeat `--single-host-pool-relay <dns> --pool-relay-port <port>`.
-- IP relay: `--pool-relay-ipv4`.
+- IP relay: `--pool-relay-ipv4 <ip> --pool-relay-port <port>`.
+- Multiple relays: (repeat line) `--single-host-pool-relay <dns> --pool-relay-port <port>`.
 - SRV record: `--multi-host-pool-relay <domain>` (no port).
 :::
+
+<details>
+<summary>Details of using an <strong>SRV record</strong></summary>
+
+With `--multi-host-pool-relay`, the certificate only holds the name of a DNS SRV record. The relay hosts and ports are resolved from DNS, so you can add, remove or move relays later with a DNS change instead of a new registration certificate.
+
+1. At your DNS provider, create one SRV entry per relay, all with the same name. `_cardano._tcp.` is the usual prefix:
+
+    ```
+    _cardano._tcp.relays.yourpool.example.com. 3600 IN SRV 10 10 3001 relay1.yourpool.example.com.
+    _cardano._tcp.relays.yourpool.example.com. 3600 IN SRV 10 10 3001 relay2.yourpool.example.com.
+    ```
+
+    The fields are priority, weight, port and target. Each target must have its own A or AAAA record.
+
+2. Check that the record resolves:
+
+    ```bash
+    dig +short SRV _cardano._tcp.relays.yourpool.example.com
+    # 10 10 3001 relay1.yourpool.example.com.
+    # 10 10 3001 relay2.yourpool.example.com.
+    ```
+
+3. In the registration certificate command, replace the `--single-host-pool-relay` and `--pool-relay-port` lines with:
+
+    ```bash
+        --multi-host-pool-relay _cardano._tcp.relays.yourpool.example.com \
+    ```
+
+:::warning
+- The name in the certificate must match the SRV record name exactly. Changing that name later means submitting a new pool registration certificate.
+- Some explorers and tools handle SRV relays poorly. If that matters to you, also register one relay with `--single-host-pool-relay` as a fallback.
+:::
+
+</details>
 
 _Copy `pool.cert` to the online machine._
 
@@ -666,6 +701,8 @@ _Copy `deleg.cert` to the online machine._
 ```bash
 export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preview/node.socket"
 currentSlot=$(cardano-cli conway query tip --testnet-magic 2 | jq -r '.slot')
+echo Current Slot: $currentSlot
+
 cardano-cli conway transaction build \
     --tx-in $(cardano-cli conway query utxo --address $(cat payment.addr) --testnet-magic 2 --out-file /dev/stdout | jq -r 'keys[0]') \
     --change-address $(cat payment.addr) \
@@ -683,6 +720,8 @@ cardano-cli conway transaction build \
 ```bash
 export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preprod/node.socket"
 currentSlot=$(cardano-cli conway query tip --testnet-magic 1 | jq -r '.slot')
+echo Current Slot: $currentSlot
+
 cardano-cli conway transaction build \
     --tx-in $(cardano-cli conway query utxo --address $(cat payment.addr) --testnet-magic 1 --out-file /dev/stdout | jq -r 'keys[0]') \
     --change-address $(cat payment.addr) \
@@ -700,6 +739,8 @@ cardano-cli conway transaction build \
 ```bash
 export CARDANO_NODE_SOCKET_PATH="/srv/cardano/mainnet/node.socket"
 currentSlot=$(cardano-cli conway query tip --mainnet | jq -r '.slot')
+echo Current Slot: $currentSlot
+
 cardano-cli conway transaction build \
     --tx-in $(cardano-cli conway query utxo --address $(cat payment.addr) --mainnet --out-file /dev/stdout | jq -r 'keys[0]') \
     --change-address $(cat payment.addr) \
