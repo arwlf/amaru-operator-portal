@@ -330,7 +330,7 @@ cardano-cli conway query utxo --address $(cat payment.addr) --mainnet
 ```
 
 :::caution Real ADA
-On mainnet, fund `payment.addr` with real ADA. Plan for the stake address deposit (`keyDeposit`, 2 ADA), the pool deposit (`poolDeposit`, 500 ADA), transaction fees and your pledge. Check the current values in the protocol parameters.
+On mainnet, fund `payment.addr` with real ADA. Plan for the stake address deposit (`stakeAddressDeposit`, 2 ADA), the pool deposit (`stakePoolDeposit`, 500 ADA), transaction fees and your pledge. Check the current values in the protocol parameters.
 :::
 
 </TabItem>
@@ -344,11 +344,24 @@ For more details, see [Register Stake Address](https://developers.cardano.org/do
 
 ### Registration certificate <span className="tag-air-gapped">[air-gapped]</span>
 
+Since the Conway era, the certificate has to include the stake address deposit (`stakeAddressDeposit`). Its value is 2 ADA (`2000000` lovelace) on Preview, Preprod and Mainnet.
+
 ```bash
 cardano-cli conway stake-address registration-certificate \
     --stake-verification-key-file stake.vkey \
+    --key-reg-deposit-amt 2000000 \
     --out-file stake.cert
 ```
+
+:::tip Check the current deposit
+The air-gapped machine cannot query the chain. Check the current value on the online machine first, for example on Preprod:
+
+```bash
+cardano-cli conway query protocol-parameters --testnet-magic 1 | jq .stakeAddressDeposit
+```
+
+Use `--testnet-magic 2` for Preview or `--mainnet` for Mainnet.
+:::
 
 _Copy `stake.cert` to the online machine._
 
