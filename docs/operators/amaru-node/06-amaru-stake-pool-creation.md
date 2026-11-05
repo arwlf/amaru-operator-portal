@@ -2,26 +2,35 @@
 id: amaru-stake-pool-creation
 title: "Creating a Stake Pool with Amaru"
 sidebar_label: "Create a Stake Pool"
-description: Command cheatsheet to generate block producer keys, configure Amaru to forge blocks, and register a stake pool on a Cardano testnet.
+description: Command cheatsheet to generate block producer keys, configure Amaru to forge blocks, and register a stake pool on preview, preprod or mainnet.
 ---
 
-This page is a command cheatsheet for turning an Amaru node into a block producer and registering a stake pool on a testnet. It assumes Amaru is already installed as a systemd service, see [Advanced Installation](/docs/operators/amaru-node/amaru-advanced-installation) first if you haven't done that yet.
+import Tabs from '@theme/Tabs';
+import TabItem from '@theme/TabItem';
+
+This page is a command cheatsheet for turning an Amaru node into a block producer and registering a stake pool on preview, preprod or mainnet. It assumes Amaru is already installed as a systemd service, see [Advanced Installation](/docs/operators/amaru-node/amaru-advanced-installation) first if you haven't done that yet.
 
 :::info Cheatsheet, not a tutorial
 This page only lists the commands. Each section links to the matching page of the official Cardano documentation for a deeper explanation of what the commands do and how to handle keys safely.
 :::
 
-:::important Testnet only
-Amaru only forges empty blocks on preprod and preview. Mainnet refuses the block-producing flags.  
-The examples below target **preview** `--testnet-magic 2`.
+:::important Pick your network
+Commands that depend on the network are shown in **Preview**, **Preprod** and **Mainnet** tabs.  
+Selecting a network in any tab switches every tab on the page.
 :::
 
 ## Prerequisites
 
 - `cardano-cli` available on both the online and the air-gapped machine.
-- A running and synced Haskell `cardano-node` on the **same network** (preview), reachable from the online machine.
+- A running and synced Haskell `cardano-node` on the **same network** as your Amaru node, reachable from the online machine.
 - `CARDANO_NODE_SOCKET_PATH` set on the online machine, pointing to that `cardano-node` socket.
-- The network passed with `--testnet-magic 2` (preview).
+- The network passed to `cardano-cli` with the matching flag:
+
+| Network | `cardano-cli` flag | Socket path used in the examples |
+|---|---|---|
+| Preview | `--testnet-magic 2` | `/srv/cardano/preview/node.socket` |
+| Preprod | `--testnet-magic 1` | `/srv/cardano/preprod/node.socket` |
+| Mainnet | `--mainnet` | `/srv/cardano/mainnet/node.socket` |
 
 :::warning cardano-cli needs a Haskell node
 `cardano-cli queries` and `transactions` talk to a node over its local socket.  
@@ -66,6 +75,11 @@ cardano-cli conway node key-gen-VRF \
 
 ### Current KES period <span className="tag-online">[online]</span>
 
+`/etc/cardano/shelley-genesis.json` must be the Shelley genesis file of the selected network.
+
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
+
 ```bash
 slotsPerKESPeriod=$(jq -r '.slotsPerKESPeriod' /etc/cardano/shelley-genesis.json)
 echo slotsPerKESPeriod: ${slotsPerKESPeriod}
@@ -77,6 +91,39 @@ echo currentSlot: ${currentSlot}
 kesPeriod=$(( currentSlot / slotsPerKESPeriod ))
 echo kesPeriod: ${kesPeriod}
 ```
+
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+slotsPerKESPeriod=$(jq -r '.slotsPerKESPeriod' /etc/cardano/shelley-genesis.json)
+echo slotsPerKESPeriod: ${slotsPerKESPeriod}
+
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preprod/node.socket"
+currentSlot=$(cardano-cli conway query tip --testnet-magic 1 | jq -r '.slot')
+echo currentSlot: ${currentSlot}
+
+kesPeriod=$(( currentSlot / slotsPerKESPeriod ))
+echo kesPeriod: ${kesPeriod}
+```
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+slotsPerKESPeriod=$(jq -r '.slotsPerKESPeriod' /etc/cardano/shelley-genesis.json)
+echo slotsPerKESPeriod: ${slotsPerKESPeriod}
+
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/mainnet/node.socket"
+currentSlot=$(cardano-cli conway query tip --mainnet | jq -r '.slot')
+echo currentSlot: ${currentSlot}
+
+kesPeriod=$(( currentSlot / slotsPerKESPeriod ))
+echo kesPeriod: ${kesPeriod}
+```
+
+</TabItem>
+</Tabs>
 
 ### Operational certificate <span className="tag-air-gapped">[air-gapped]</span>
 
@@ -117,16 +164,40 @@ AMARU_OPERATOR_VRF=/var/lib/amaru/secret/vrf.skey
 ```
 
 ### Ensure the node.cert is valid <span className="tag-online">[online]</span>
+
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
+
 ```bash
 export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preview/node.socket"
 cardano-cli conway query kes-period-info --testnet-magic 2 --op-cert-file /var/lib/amaru/secret/node.cert
 ```
+
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preprod/node.socket"
+cardano-cli conway query kes-period-info --testnet-magic 1 --op-cert-file /var/lib/amaru/secret/node.cert
+```
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/mainnet/node.socket"
+cardano-cli conway query kes-period-info --mainnet --op-cert-file /var/lib/amaru/secret/node.cert
+```
+
+</TabItem>
+</Tabs>
 
 ### Restart the node <span className="tag-online">[online]</span>
 
 ```bash
 sudo systemctl restart amaru
 ```
+
 ---
 
 ## 3. Generate Wallet keys
@@ -151,6 +222,9 @@ cardano-cli conway stake-address key-gen \
 
 ### Stake address <span className="tag-air-gapped">[air-gapped]</span>
 
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
+
 ```bash
 cardano-cli conway stake-address build \
     --stake-verification-key-file stake.vkey \
@@ -158,7 +232,33 @@ cardano-cli conway stake-address build \
     --testnet-magic 2
 ```
 
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+cardano-cli conway stake-address build \
+    --stake-verification-key-file stake.vkey \
+    --out-file stake.addr \
+    --testnet-magic 1
+```
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+cardano-cli conway stake-address build \
+    --stake-verification-key-file stake.vkey \
+    --out-file stake.addr \
+    --mainnet
+```
+
+</TabItem>
+</Tabs>
+
 ### Payment address <span className="tag-air-gapped">[air-gapped]</span>
+
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
 
 ```bash
 cardano-cli conway address build \
@@ -168,9 +268,37 @@ cardano-cli conway address build \
     --testnet-magic 2
 ```
 
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+cardano-cli conway address build \
+    --payment-verification-key-file payment.vkey \
+    --stake-verification-key-file stake.vkey \
+    --out-file payment.addr \
+    --testnet-magic 1
+```
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+cardano-cli conway address build \
+    --payment-verification-key-file payment.vkey \
+    --stake-verification-key-file stake.vkey \
+    --out-file payment.addr \
+    --mainnet
+```
+
+</TabItem>
+</Tabs>
+
 _Copy `payment.addr` to the online machine._
 
 ### Fund and check balance <span className="tag-online">[online]</span>
+
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
 
 ```bash
 export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preview/node.socket"
@@ -178,8 +306,35 @@ cardano-cli conway query utxo --address $(cat payment.addr) --testnet-magic 2
 ```
 
 :::tip
-On testnet, use the [Cardano faucet](https://docs.cardano.org/cardano-testnets/tools/faucet) to get test ADA. Select the Preview testnet and paste your `payment.addr`.
+Use the [Cardano faucet](https://docs.cardano.org/cardano-testnets/tools/faucet) to get test ADA. Select the **Preview** testnet and paste your `payment.addr`.
 :::
+
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preprod/node.socket"
+cardano-cli conway query utxo --address $(cat payment.addr) --testnet-magic 1
+```
+
+:::tip
+Use the [Cardano faucet](https://docs.cardano.org/cardano-testnets/tools/faucet) to get test ADA. Select the **Preprod** testnet and paste your `payment.addr`.
+:::
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/mainnet/node.socket"
+cardano-cli conway query utxo --address $(cat payment.addr) --mainnet
+```
+
+:::caution Real ADA
+On mainnet, fund `payment.addr` with real ADA. Plan for the stake address deposit (`keyDeposit`, 2 ADA), the pool deposit (`poolDeposit`, 500 ADA), transaction fees and your pledge. Check the current values in the protocol parameters.
+:::
+
+</TabItem>
+</Tabs>
 
 ---
 
@@ -199,6 +354,9 @@ _Copy `stake.cert` to the online machine._
 
 ### Build the transaction <span className="tag-online">[online]</span>
 
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
+
 ```bash
 export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preview/node.socket"
 currentSlot=$(cardano-cli conway query tip --testnet-magic 2 | jq -r '.slot')
@@ -214,9 +372,51 @@ cardano-cli conway transaction build \
     --out-file tx.raw
 ```
 
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preprod/node.socket"
+currentSlot=$(cardano-cli conway query tip --testnet-magic 1 | jq -r '.slot')
+echo Current Slot: $currentSlot
+
+cardano-cli conway transaction build \
+    --tx-in $(cardano-cli conway query utxo --address $(cat payment.addr) --testnet-magic 1 --out-file /dev/stdout | jq -r 'keys[0]') \
+    --change-address $(cat payment.addr) \
+    --testnet-magic 1 \
+    --certificate-file stake.cert \
+    --invalid-hereafter $(( currentSlot + 1000 )) \
+    --witness-override 2 \
+    --out-file tx.raw
+```
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/mainnet/node.socket"
+currentSlot=$(cardano-cli conway query tip --mainnet | jq -r '.slot')
+echo Current Slot: $currentSlot
+
+cardano-cli conway transaction build \
+    --tx-in $(cardano-cli conway query utxo --address $(cat payment.addr) --mainnet --out-file /dev/stdout | jq -r 'keys[0]') \
+    --change-address $(cat payment.addr) \
+    --mainnet \
+    --certificate-file stake.cert \
+    --invalid-hereafter $(( currentSlot + 1000 )) \
+    --witness-override 2 \
+    --out-file tx.raw
+```
+
+</TabItem>
+</Tabs>
+
 _Copy `tx.raw` to the air-gapped machine._
 
 ### Sign the transaction <span className="tag-air-gapped">[air-gapped]</span>
+
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
 
 ```bash
 cardano-cli conway transaction sign \
@@ -227,13 +427,60 @@ cardano-cli conway transaction sign \
     --out-file tx.signed
 ```
 
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+cardano-cli conway transaction sign \
+    --tx-body-file tx.raw \
+    --signing-key-file payment.skey \
+    --signing-key-file stake.skey \
+    --testnet-magic 1 \
+    --out-file tx.signed
+```
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+cardano-cli conway transaction sign \
+    --tx-body-file tx.raw \
+    --signing-key-file payment.skey \
+    --signing-key-file stake.skey \
+    --mainnet \
+    --out-file tx.signed
+```
+
+</TabItem>
+</Tabs>
+
 _Copy `tx.signed` to the online machine._
 
 ### Submit the transaction <span className="tag-online">[online]</span>
 
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
+
 ```bash
 cardano-cli conway transaction submit --tx-file tx.signed --testnet-magic 2
 ```
+
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+cardano-cli conway transaction submit --tx-file tx.signed --testnet-magic 1
+```
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+cardano-cli conway transaction submit --tx-file tx.signed --mainnet
+```
+
+</TabItem>
+</Tabs>
 
 ---
 
@@ -279,13 +526,43 @@ The resulting hash must match `poolMetaDataHash.txt`.
 
 ### Protocol parameters <span className="tag-online">[online]</span>
 
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
+
 ```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preview/node.socket"
 cardano-cli conway query protocol-parameters --testnet-magic 2 --out-file protocol.json
 minPoolCost=$(jq -r '.minPoolCost' protocol.json)
 echo "Minimum pool cost: $minPoolCost lovelace"
 ```
 
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preprod/node.socket"
+cardano-cli conway query protocol-parameters --testnet-magic 1 --out-file protocol.json
+minPoolCost=$(jq -r '.minPoolCost' protocol.json)
+echo "Minimum pool cost: $minPoolCost lovelace"
+```
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/mainnet/node.socket"
+cardano-cli conway query protocol-parameters --mainnet --out-file protocol.json
+minPoolCost=$(jq -r '.minPoolCost' protocol.json)
+echo "Minimum pool cost: $minPoolCost lovelace"
+```
+
+</TabItem>
+</Tabs>
+
 ### Pool registration certificate <span className="tag-air-gapped">[air-gapped]</span>
+
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
 
 ```bash
 cardano-cli conway stake-pool registration-certificate \
@@ -303,6 +580,49 @@ cardano-cli conway stake-pool registration-certificate \
     --metadata-hash $(cat poolMetaDataHash.txt) \
     --out-file pool.cert
 ```
+
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+cardano-cli conway stake-pool registration-certificate \
+    --cold-verification-key-file cold.vkey \
+    --vrf-verification-key-file vrf.vkey \
+    --pool-pledge 9000000000 \
+    --pool-cost 170000000 \
+    --pool-margin 0.01 \
+    --pool-reward-account-verification-key-file stake.vkey \
+    --pool-owner-stake-verification-key-file stake.vkey \
+    --testnet-magic 1 \
+    --single-host-pool-relay relay1.yourpool.example.com \
+    --pool-relay-port 3001 \
+    --metadata-url https://YOUR_METADATA_URL \
+    --metadata-hash $(cat poolMetaDataHash.txt) \
+    --out-file pool.cert
+```
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+cardano-cli conway stake-pool registration-certificate \
+    --cold-verification-key-file cold.vkey \
+    --vrf-verification-key-file vrf.vkey \
+    --pool-pledge 9000000000 \
+    --pool-cost 170000000 \
+    --pool-margin 0.01 \
+    --pool-reward-account-verification-key-file stake.vkey \
+    --pool-owner-stake-verification-key-file stake.vkey \
+    --mainnet \
+    --single-host-pool-relay relay1.yourpool.example.com \
+    --pool-relay-port 3001 \
+    --metadata-url https://YOUR_METADATA_URL \
+    --metadata-hash $(cat poolMetaDataHash.txt) \
+    --out-file pool.cert
+```
+
+</TabItem>
+</Tabs>
 
 :::note Relay options
 - Multiple relays: repeat `--single-host-pool-relay <dns> --pool-relay-port <port>`.
@@ -325,7 +645,11 @@ _Copy `deleg.cert` to the online machine._
 
 ### Build the transaction <span className="tag-online">[online]</span>
 
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
+
 ```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preview/node.socket"
 currentSlot=$(cardano-cli conway query tip --testnet-magic 2 | jq -r '.slot')
 cardano-cli conway transaction build \
     --tx-in $(cardano-cli conway query utxo --address $(cat payment.addr) --testnet-magic 2 --out-file /dev/stdout | jq -r 'keys[0]') \
@@ -338,9 +662,49 @@ cardano-cli conway transaction build \
     --out-file tx.raw
 ```
 
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preprod/node.socket"
+currentSlot=$(cardano-cli conway query tip --testnet-magic 1 | jq -r '.slot')
+cardano-cli conway transaction build \
+    --tx-in $(cardano-cli conway query utxo --address $(cat payment.addr) --testnet-magic 1 --out-file /dev/stdout | jq -r 'keys[0]') \
+    --change-address $(cat payment.addr) \
+    --testnet-magic 1 \
+    --certificate-file pool.cert \
+    --certificate-file deleg.cert \
+    --invalid-hereafter $(( currentSlot + 1000 )) \
+    --witness-override 3 \
+    --out-file tx.raw
+```
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/mainnet/node.socket"
+currentSlot=$(cardano-cli conway query tip --mainnet | jq -r '.slot')
+cardano-cli conway transaction build \
+    --tx-in $(cardano-cli conway query utxo --address $(cat payment.addr) --mainnet --out-file /dev/stdout | jq -r 'keys[0]') \
+    --change-address $(cat payment.addr) \
+    --mainnet \
+    --certificate-file pool.cert \
+    --certificate-file deleg.cert \
+    --invalid-hereafter $(( currentSlot + 1000 )) \
+    --witness-override 3 \
+    --out-file tx.raw
+```
+
+</TabItem>
+</Tabs>
+
 _Copy `tx.raw` to the air-gapped machine._
 
 ### Sign the transaction (payment + cold + stake) <span className="tag-air-gapped">[air-gapped]</span>
+
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
 
 ```bash
 cardano-cli conway transaction sign \
@@ -352,13 +716,62 @@ cardano-cli conway transaction sign \
     --out-file tx.signed
 ```
 
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+cardano-cli conway transaction sign \
+    --tx-body-file tx.raw \
+    --signing-key-file payment.skey \
+    --signing-key-file cold.skey \
+    --signing-key-file stake.skey \
+    --testnet-magic 1 \
+    --out-file tx.signed
+```
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+cardano-cli conway transaction sign \
+    --tx-body-file tx.raw \
+    --signing-key-file payment.skey \
+    --signing-key-file cold.skey \
+    --signing-key-file stake.skey \
+    --mainnet \
+    --out-file tx.signed
+```
+
+</TabItem>
+</Tabs>
+
 _Copy `tx.signed` to the online machine._
 
 ### Submit the transaction <span className="tag-online">[online]</span>
 
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
+
 ```bash
 cardano-cli conway transaction submit --tx-file tx.signed --testnet-magic 2
 ```
+
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+cardano-cli conway transaction submit --tx-file tx.signed --testnet-magic 1
+```
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+cardano-cli conway transaction submit --tx-file tx.signed --mainnet
+```
+
+</TabItem>
+</Tabs>
 
 :::warning
 Only keep `node.cert`, `vrf.skey` and `kes.skey` on your online Block Producer.  
@@ -379,9 +792,35 @@ _Copy `stakepoolid.txt` to the online machine._
 
 ### Check on-chain <span className="tag-online">[online]</span>
 
+<Tabs groupId="network" queryString="network" className="tabsblock" defaultValue="preview">
+<TabItem value="preview" label="Preview">
+
 ```bash
 export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preview/node.socket"
 cardano-cli conway query stake-snapshot --stake-pool-id $(cat stakepoolid.txt) --testnet-magic 2
 ```
 
 This query can take a long time to return. It's quicker to check online on [Cardanoscan (preview)](https://preview.cardanoscan.io/pools).
+
+</TabItem>
+<TabItem value="preprod" label="Preprod">
+
+```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/preprod/node.socket"
+cardano-cli conway query stake-snapshot --stake-pool-id $(cat stakepoolid.txt) --testnet-magic 1
+```
+
+This query can take a long time to return. It's quicker to check online on [Cardanoscan (preprod)](https://preprod.cardanoscan.io/pools).
+
+</TabItem>
+<TabItem value="mainnet" label="Mainnet">
+
+```bash
+export CARDANO_NODE_SOCKET_PATH="/srv/cardano/mainnet/node.socket"
+cardano-cli conway query stake-snapshot --stake-pool-id $(cat stakepoolid.txt) --mainnet
+```
+
+This query can take a long time to return. It's quicker to check online on [Cardanoscan (mainnet)](https://cardanoscan.io/pools).
+
+</TabItem>
+</Tabs>
